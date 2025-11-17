@@ -5,3 +5,5 @@ terraform/.terraform/environment
 terraform/*.tfstate.backup
 terraform/*.tfstate
 *~
+
+npm-shrinkwrap.json
