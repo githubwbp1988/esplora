@@ -1,5 +1,6 @@
 @import url("font/inconsolata/index.css");
 @import url("light-theme_style.css");
+@import url("light-esplora_tx_flow_styles.css");
 
 @font-face {
   font-family: Inter;
@@ -1749,7 +1750,7 @@ body::after{
 .title-bar-container {
   width: 100%;
   max-width: 1000px;
-  height: 70px;
+  height: 0px;
   margin: 0 auto;
   padding-left: 27px;
 }
@@ -2679,6 +2680,9 @@ dl.mempool-histogram .bar:before {
   background-color: #21272d; 
   display: flex;
   margin-bottom: 40px;
+}
+.sub-navbar.no-bottom-padding{
+  margin-bottom: 0;
 }
 
 .sub-nav-container{

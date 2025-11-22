@@ -44,11 +44,11 @@ export const blks = (blocks, viewMore, loadMore, { t, loading, ...S }) =>
       : "" }
     </div>
     }
-  </div>
-  
+  </div> 
 
-const pagingNav = ({ nextBlocks, prevBlocks, t }) =>
-  process.browser
+const pagingNav = ({ nextBlocks, prevBlocks, t }) => {
+  
+  return process.browser
 
 ? nextBlocks != null &&
     <div className="load-more g-btn primary-btn font-btn-2" role="button" data-loadmoreBlockHeight={''+nextBlocks}>
@@ -57,13 +57,14 @@ const pagingNav = ({ nextBlocks, prevBlocks, t }) =>
 
 : [
     prevBlocks != null &&
-      <a className="load-more" href={`blocks/recent/?start=${prevBlocks}`}>
+      <a className="load-more" id="pre-block-link" href={`blocks/recent/?start=${prevBlocks}`}>
         <div><img alt="" src={`${staticRoot}img/icons/arrow_left_blu.png`} /></div>
         <span>{t`Newer`}</span>
       </a>
   , nextBlocks != null &&
-      <a className="load-more" href={`blocks/recent/?start=${nextBlocks}`}>
+      <a className="load-more" id="next-block-link" href={`blocks/recent/?start=${nextBlocks}`}>
         <span>{t`Older`}</span>
         <div><img alt="" src={`${staticRoot}img/icons/arrow_right_blu.png`} /></div>
       </a>
   ]
+}

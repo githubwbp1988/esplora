@@ -6,9 +6,9 @@ import subnav from './sub-navbar'
 export default (body, opt) =>
   <div className="explorer-container">
     <div className="content-wrap">
-      { navbar(opt) }
+      {/* { navbar(opt) } */}
       {subnav(opt.t, opt.isTouch, opt.activeTab)}
       { body }
     </div>
-    { footer(opt) }
+    {/* { footer(opt) } */}
   </div>

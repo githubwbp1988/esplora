@@ -8,6 +8,8 @@
     "dist": "../node_modules/.bin/babel -d dist src"
   },
   "dependencies": {
+    "@babel/core": "^7.12.10",
+    "@babel/preset-env": "^7.12.11",
     "@babel/plugin-transform-react-jsx": "^7.12.11",
     "@babel/polyfill": "^7.12.1",
     "@cycle/dom": "^22.8.0",
@@ -22,6 +24,7 @@
     "browserify-package-json": "^1.0.1",
     "bs58check": "^2.1.2",
     "bundle-collapser": "^1.4.0",
+    "d3": "^7.9.0",
     "debug": "^4.3.1",
     "envify": "^4.1.0",
     "fmtbtc": "0.0.3",
@@ -38,7 +41,19 @@
   },
   "browserify": {
     "transform": [
-      "babelify",
+      [
+        "babelify",
+        {
+          "presets": [
+            ["@babel/env", {
+              "modules": "commonjs"
+            }]
+          ],
+          "plugins": [
+            ["@babel/plugin-transform-react-jsx", {"pragma": "Snabbdom.createElement"}]
+          ]
+        }
+      ],
       [
         "envify",
         {

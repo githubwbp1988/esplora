@@ -160,7 +160,7 @@ if (process.env.SOCKET_PATH) {
   } catch (_) { }
 }
 
-app.listen(process.env.SOCKET_PATH || process.env.PORT || 5001, function () {
+app.listen(process.env.SOCKET_PATH || process.env.PORT || 5101, function () {
   let addr = this.address()
   if (addr.address) addr = `${addr.address}:${addr.port}`
   console.log(`HTTP server running on ${addr}`)
