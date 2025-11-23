@@ -330,7 +330,7 @@ const renderNetwork = (data) => {
       e.stopPropagation()
       selectedNode = d
      
-      let _wallet_info = wallet_info.filter(wallet_item => wallet_item.walletname === address_wallet_map[d.label])
+      let _wallet_info = wallet_info.filter(wallet_item => wallet_item.walletname === address_wallet_map[d.id])
       if (_wallet_info.length > 0) {
         selectedWallet = _wallet_info[0]
       }
@@ -355,7 +355,7 @@ const renderNetwork = (data) => {
     // .attr('font-weight', 'bold')
     .attr('pointer-events', 'none')
     .attr('font-size', 10)
-    .text(d => (address_wallet_map[d.label] ? address_wallet_map[d.label] + ': ' : '') + d.label.substring(d.label.length - 5, d.label.length))
+    .text(d => (address_wallet_map[d.id] ? address_wallet_map[d.id] + ': ' : '') + d.label.substring(d.label.length - 5, d.label.length))
 
   // nodes.filter(d => d.type === 'address')
   //     .append("text")
@@ -363,7 +363,7 @@ const renderNetwork = (data) => {
   //     .attr("dominant-baseline", "central") // 垂直居中
   //     .attr("fill", "#fff")
   //     .attr("font-size", 10)
-  //     .text(d => address_wallet_map[d.label]);
+  //     .text(d => address_wallet_map[d.id]);
 
   // 小圆节点上的数字，可以单独处理，因为它不环绕
   nodes.filter(d => d.type !== 'address')
@@ -454,9 +454,9 @@ const updateDetailPanel = () => {
           </div>
         </div>
         <br/>
-        <button className="btn btn-primary" onclick="testSend('${address_wallet_map[selectedNode.label]}')">发起一笔交易(金额随机)</button>
+        <button className="btn btn-primary" onclick="testSend('${address_wallet_map[selectedNode.id]}')">发起一笔交易(金额随机)</button>
         <br/><br/>
-        <button className="btn btn-primary" onclick="testMine('${address_wallet_map[selectedNode.label]}')">打包一个区块(也称挖矿)</button>
+        <button className="btn btn-primary" onclick="testMine('${address_wallet_map[selectedNode.id]}')">打包一个区块(也称挖矿)</button>
       </div>
     `
   } else if (selectedNode.type === 'edge') {
@@ -834,9 +834,11 @@ export const regtestNet = ({ data, t, ...S }) => {
   if (data && process.browser) {
     setTimeout(() => {
       try { console.debug('regtestnet: scheduled client render, hasData=', !!data) } catch (e) {}
-      if (!rerender_ntwork) {
-        rerender_ntwork = true;
-        renderNetwork(data)
+      if (!isEmptyUsingForIn(address_wallet_map)) {
+        if (!rerender_ntwork) {
+          rerender_ntwork = true;
+          renderNetwork(data)
+        }
       }
 
       if (!address_wallet_processed && isEmptyUsingForIn(address_wallet_map)) {
