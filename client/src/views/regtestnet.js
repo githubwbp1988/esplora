@@ -600,8 +600,10 @@ async function limitConcurrency1(dataArr, taskFactory, limit) {
   return Promise.all(results);
 }
 
+const wallet_url = 'http://127.0.0.1:7700'
+
 function getwalletinfo() {
-  const _url = 'http://127.0.0.1:7700/api/wallet/infoes';
+  const _url = `${wallet_url}/api/wallet/infoes`;
 
   return fetch(_url)
     .then(response => {
@@ -632,7 +634,7 @@ window.testSend = (wallet_name) => {
     return;
   }
   isTesting = true;
-  const _url = 'http://127.0.0.1:7700/api/wallet/testsend/' + wallet_name;
+  const _url = `${wallet_url}/api/wallet/testsend/` + wallet_name;
 
   return fetch(_url)
     .then(response => {
@@ -655,7 +657,7 @@ window.testMine = (wallet_name) =>  {
     return;
   }
   isTesting = true;
-  const _url = 'http://127.0.0.1:7700/api/wallet/testmine/' + wallet_name;
+  const _url = `${wallet_url}/api/wallet/testmine/` + wallet_name;
 
   return fetch(_url)
     .then(response => {
@@ -694,7 +696,7 @@ function checkAddress(addrId) {
   //   }, delay);
   // });
 
-  const _url = 'http://127.0.0.1:7700/api/address/check/' + addrId;
+  const _url = `${wallet_url}/api/address/check/` + addrId;
 
   return fetch(_url)
     .then(response => {
