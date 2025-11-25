@@ -392,6 +392,11 @@ const renderNetwork = (data) => {
 const updateDetailPanel = () => {
   const panel = document.querySelector('.address-network-detail')
   if (!panel) return
+
+  if (!isPanelOpen) {
+    panel.innerHTML = ''
+    return  
+  }
   
     panel.innerHTML = wallet_info.map(wallet_item => `
       <div class="detail-card">
@@ -830,6 +835,15 @@ const trick_wallet = () => {
   });
 }
 
+let isPanelOpen = true;
+
+const optPanel = () => {
+  isPanelOpen = !isPanelOpen;
+  const panel_header = document.querySelector('.panel-header')
+  panel_header.innerHTML = isPanelOpen ? '面板-点击折叠' : '面板-点击打开';
+  updateDetailPanel();
+}
+
 export const regtestNet = ({ data, t, ...S }) => {
   trick_wallet();
   // Ensure client-side render runs even when Snabbdom's oncreate doesn't fire
@@ -920,8 +934,8 @@ export const regtestNet = ({ data, t, ...S }) => {
         </div>
       </div>
       */}
-
-      <div className="address-network-detail" style={{ boxSizing: 'border-box', position: 'absolute', top: 0, left: '14px', height: '580px', maxWidth: '400px', overflowY: 'auto', background: '#00000080' }}>
+      <div className="panel-header" onclick={optPanel} style={{ boxSizing: 'border-box', position: 'absolute', top: 0, left: '14px', height: '40px', fontSize: '20px', color: '#fff', width: '300px', textAlign: 'center', background: '#00000080' }}>{isPanelOpen ? '面板-点击折叠' : '面板-点击打开'}</div>
+      <div className="address-network-detail" style={{ boxSizing: 'border-box', position: 'absolute', top: '48px', left: '14px', height: '580px', maxWidth: '400px', overflowY: 'auto', background: '#00000080' }}>
         {/* {wallet_info.map(wallet_item => { return (
           <div class="detail-card">
             <h3>💰 钱包(`${wallet_item.walletname}`)</h3>
