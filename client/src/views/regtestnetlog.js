@@ -335,7 +335,7 @@ const renderNetworkLog = (data) => {
   // 区块奖励
   blockNodeGroups.append('text')
     .attr('text-anchor', 'middle')
-    .attr('y', 30 - 26)
+    .attr('y', 48 - 26)
     .attr('font-size', '10px')
     .attr('fill', '#fff')
     .attr('font-weight', 'bold')
