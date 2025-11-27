@@ -315,6 +315,14 @@ const renderNetworkLog = (data) => {
   //   .attr('fill', '#00ffff')
   //   .text(d => `height: ${d.height}`)
 
+  // 区块 pre hash
+  blockNodeGroups.append('text')
+    .attr('text-anchor', 'middle')
+    .attr('y', - 26)
+    .attr('font-size', '10px')
+    .attr('fill', '#fff')
+    .text(d => 'pre hash: ...' + d.prev_hash.substring(d.prev_hash.length - 5, d.prev_hash.length))
+
   // 区块hash
   blockNodeGroups.append('text')
     .attr('text-anchor', 'middle')
