@@ -19,6 +19,7 @@ let nodesMap = new Map()
 
 const buildNetworkFromData = (data) => {
   wallet_info = data.wallets
+  
   blocks = Object.fromEntries(
     data.blocks.map(item => [item.height, item]) // 将每个对象转换为 [key, value] 数组对
   );
@@ -352,10 +353,24 @@ const renderNetworkLog = (data) => {
   nodes_g.filter(d => d.type === 'wallet')
       .append("text")
       .attr("text-anchor", "middle")
-      .attr("dominant-baseline", "central") // 垂直居中
+      .attr('y', -10)
       .attr("fill", "#fff")
       .attr("font-size", 12)
       .text(d => d.name);
+  nodes_g.filter(d => d.type === 'wallet')
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr('y', 3)
+      .attr("fill", "#fff")
+      .attr("font-size", 12)
+      .text(d => wallet_info[d.name].balance);
+  nodes_g.filter(d => d.type === 'wallet')
+      .append("text")
+      .attr("text-anchor", "middle")
+      .attr('y', 16)
+      .attr("fill", "#fff")
+      .attr("font-size", 12)
+      .text('BTC');
 
   // 
   nodes_g.filter(d => d.type === 'tx')
