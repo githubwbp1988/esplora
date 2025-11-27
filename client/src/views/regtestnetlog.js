@@ -335,20 +335,20 @@ const renderNetworkLog = (data) => {
   // 区块奖励
   blockNodeGroups.append('text')
     .attr('text-anchor', 'middle')
-    .attr('y', 39 - 26)
+    .attr('y', 30 - 26)
     .attr('font-size', '10px')
     .attr('fill', '#fff')
     .attr('font-weight', 'bold')
     .text(d => `award: ${d.bonus} BTC`)
 
-  // 区块fee
-  blockNodeGroups.append('text')
-    .attr('text-anchor', 'middle')
-    .attr('y', 52 - 26)
-    .attr('font-size', '10px')
-    .attr('fill', '#fff')
-    .attr('font-weight', 'bold')
-    .text(d => `fee: ${d.fee} BTC`)
+  // // 区块fee
+  // blockNodeGroups.append('text')
+  //   .attr('text-anchor', 'middle')
+  //   .attr('y', 52 - 26)
+  //   .attr('font-size', '10px')
+  //   .attr('fill', '#fff')
+  //   .attr('font-weight', 'bold')
+  //   .text(d => `fee: ${d.fee} BTC`)
 
   blockNodeGroups.append('text')
     .attr('text-anchor', 'middle')
