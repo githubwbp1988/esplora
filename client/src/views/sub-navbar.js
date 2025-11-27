@@ -1,35 +1,75 @@
 import Snabbdom from 'snabbdom-pragma'
 import search from './search'
-import { rerender_ntwork_opt } from './regtestnet'
+import { rerender_ntwork_opt, regtestnet_simulation_opt } from './regtestnet'
+import { rerender_logntwork_opt, regtestnetlog_simulation_opt } from './regtestnetlog'
 function handleLinkClick(e) {
-  rerender_ntwork_opt()
-  // // 1. 阻止默认跳转行为，为您的函数争取时间
-  // e.preventDefault(); 
+  regtestnet_simulation_opt(false)
+  rerender_ntwork_opt(false)
+  regtestnetlog_simulation_opt(true)
+  rerender_logntwork_opt(true)
+  // // // 1. 阻止默认跳转行为，为您的函数争取时间
+  // // e.preventDefault(); 
   
-  // // 2. 执行您的函数
-  // rerender_ntwork_opt();
+  // // // 2. 执行您的函数
+  // // rerender_ntwork_opt();
   
-  // // 3. 手动触发跳转
-  // // e.currentTarget 指向 linkElement
-  // window.location.href = e.currentTarget.href; 
+  // // // 3. 手动触发跳转
+  // // // e.currentTarget 指向 linkElement
+  // // window.location.href = e.currentTarget.href; 
+
+}
+
+function handleLinkClick1(e) {
+  regtestnet_simulation_opt(true)
+  rerender_ntwork_opt(true)
+  regtestnetlog_simulation_opt(false)
+  rerender_logntwork_opt(false)
+}
+function handleLinkClick2(e) {
+  regtestnet_simulation_opt(true)
+  rerender_ntwork_opt(true)
+  regtestnetlog_simulation_opt(true)
+  rerender_logntwork_opt(true)
+}
+function handleLinkClick3(e) {
+  regtestnet_simulation_opt(true)
+  rerender_ntwork_opt(true)
+  regtestnetlog_simulation_opt(true)
+  rerender_logntwork_opt(true)
+}
+function handleLinkClick4(e) {
+  regtestnet_simulation_opt(true)
+  rerender_ntwork_opt(true)
+  regtestnetlog_simulation_opt(true)
+  rerender_logntwork_opt(true)
 }
 
 setTimeout(() => {
   const linkElement = document.getElementById('regtest-net-link'); 
   const linkElement1 = document.getElementById('regtest-net-link1'); 
-  const linkElement2 = document.getElementById('blocks-link'); 
+  const linkElement2 = document.getElementById('dashboard-link');
+  const linkElement3 = document.getElementById('blocks-link');
+  const linkElement4 = document.getElementById('tx-link'); 
   
   if (linkElement) {
       linkElement.removeEventListener('click', handleLinkClick); 
       linkElement.addEventListener('click', handleLinkClick);
   }
   if (linkElement1) {
-      linkElement1.removeEventListener('click', handleLinkClick); 
-      linkElement1.addEventListener('click', handleLinkClick);
+      linkElement1.removeEventListener('click', handleLinkClick1); 
+      linkElement1.addEventListener('click', handleLinkClick1);
   }
   if (linkElement2) {
-      linkElement2.removeEventListener('click', handleLinkClick); 
-      linkElement2.addEventListener('click', handleLinkClick);
+      linkElement2.removeEventListener('click', handleLinkClick2); 
+      linkElement2.addEventListener('click', handleLinkClick2);
+  }
+  if (linkElement3) {
+      linkElement3.removeEventListener('click', handleLinkClick3); 
+      linkElement3.addEventListener('click', handleLinkClick3);
+  }
+  if (linkElement4) {
+      linkElement4.removeEventListener('click', handleLinkClick4); 
+      linkElement4.addEventListener('click', handleLinkClick4);
   }
 }, 800);
 

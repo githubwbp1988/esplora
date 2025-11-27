@@ -13,14 +13,20 @@ let graphNodes = []
 let graphEdges = []
 let selectedNode = null
 let selectedWallet = null
-let isPaused = false
 
 let address_wallet_map = {}
 let address_wallet_processed = false
 
 let rerender_ntwork = false
-export const rerender_ntwork_opt = () => {
-  rerender_ntwork = false
+export const rerender_ntwork_opt = (stat) => {
+  rerender_ntwork = stat
+}
+let simulation_paused = false
+export const regtestnet_simulation_opt = (stat) => {  
+  simulation_paused = stat
+  if (simulation_paused) {
+    simulation && simulation.stop()
+  }
 }
 
 let pending_address_wallet = []
@@ -271,6 +277,11 @@ const renderNetwork = (data) => {
     g.attr('transform', e.transform)
   })
   svg.call(zoom)
+
+  if (simulation) {
+    simulation.stop()
+    simulation = null
+  }
 
   // 力导向图
   simulation = d3.forceSimulation(graphNodes)
@@ -542,8 +553,8 @@ const clearSelection = () => {
 // // 暂停/继续模拟
 // const togglePause = () => {
 //   if (simulation) {
-//     isPaused = !isPaused
-//     isPaused ? simulation.stop() : simulation.restart()
+//     simulation_paused = !simulation_paused
+//     simulation_paused ? simulation.stop() : simulation.restart()
 //   }
 // }
 
@@ -918,6 +929,9 @@ const optPanel = () => {
 
 let last_regtest_ts = 0
 export const regtestNet = ({ netdata, t, ...S }) => {
+  if (simulation && simulation_paused) {
+    rerender_ntwork = false
+  }
   trick_wallet();
   // Ensure client-side render runs even when Snabbdom's oncreate doesn't fire
   // let curr_regtest_ts = Math.floor(Date.now() / 1000)
@@ -932,7 +946,7 @@ export const regtestNet = ({ netdata, t, ...S }) => {
       try { console.debug('regtestnet: scheduled client render, hasData=', !!netdata) } catch (e) {}
       if (!isEmptyUsingForIn(address_wallet_map)) {
         if (!rerender_ntwork) {
-          // rerender_ntwork = true;
+          rerender_ntwork = true;
           renderNetwork(netdata)
         }
       }

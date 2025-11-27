@@ -3,7 +3,7 @@ import { formatSat, formatNumber } from './util'
 import * as d3 from 'd3/dist/d3.min.js'
 import layout from './layout'
 
-let simulation = null
+let simulation_log = null
 let svg = null
 
 let selectedNode = null
@@ -16,6 +16,18 @@ let links = []
 let wallet_info = {}
 let blocks = {}
 let nodesMap = new Map()
+
+let rerender_logntwork = false
+export const rerender_logntwork_opt = (stat) => {
+  rerender_logntwork = stat
+}
+let simulation_log_paused = false
+export const regtestnetlog_simulation_opt = (stat) => {  
+  simulation_log_paused = stat
+  if (simulation_log_paused) {
+    simulation_log && simulation_log.stop()
+  }
+}
 
 const buildNetworkFromData = (data) => {
   wallet_info = data.wallets
@@ -129,8 +141,13 @@ const renderNetworkLog = (data) => {
   })
   svg.call(zoom)
 
+  if (simulation_log) {
+    simulation_log.stop()
+    simulation_log = null
+  }
+
   // 创建力导向图
-  simulation = d3.forceSimulation(nodes)
+  simulation_log = d3.forceSimulation(nodes)
     .force('link', d3.forceLink(links)
       .id(d => typeof d === 'string' ? d : d.id)
       .distance(d => {
@@ -219,7 +236,7 @@ const renderNetworkLog = (data) => {
     .attr('class', 'node')
     .call(d3.drag()
       .on('start', e => {
-        if (!e.active) simulation.alphaTarget(0.3).restart()
+        if (!e.active) simulation_log.alphaTarget(0.3).restart()
         e.subject.fx = e.subject.x
         e.subject.fy = e.subject.y
       })
@@ -228,7 +245,7 @@ const renderNetworkLog = (data) => {
         e.subject.fy = e.y
       })
       .on('end', e => {
-        if (!e.active) simulation.alphaTarget(0)
+        if (!e.active) simulation_log.alphaTarget(0)
         e.subject.fx = null
         e.subject.fy = null
       }))
@@ -412,7 +429,7 @@ const renderNetworkLog = (data) => {
       .text('BTC');
 
   // 更新位置
-  simulation.on('tick', () => {
+  simulation_log.on('tick', () => {
     links_g
       .attr('x1', d => {
         const source = typeof d.source === 'string' 
@@ -641,10 +658,20 @@ const optPanel = () => {
 }
 
 export const regtestNetLog = ({ netlogdata, t, ...S }) => {
+  if (simulation_log && simulation_log_paused) {
+    rerender_logntwork = false
+  }
   if (netlogdata && process.browser) {
     try { console.debug('regtestnet: scheduled client render, hasData=', !!netlogdata) } catch (e) {}
     renderNetworkLog(netlogdata)
+    if (!rerender_logntwork) {
+      rerender_logntwork = true;
+      renderNetworkLog(netlogdata)
+    }
   }
+  setTimeout(() => {
+    rerender_logntwork = false
+  }, 360 * 1000)
   return homeLayout(
     <div className="address-network-container" style={{ position: 'relative' }}>
       {/* <div className="panel-header" onclick={optPanel} style={{ boxSizing: 'border-box', position: 'absolute', top: 0, left: '14px', height: '40px', fontSize: '20px', color: '#fff', width: '300px', textAlign: 'center', background: '#00000080' }}>{isPanelOpen ? '面板-点击折叠' : '面板-点击打开'}</div>
