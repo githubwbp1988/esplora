@@ -263,7 +263,7 @@ const renderNetwork = (data) => {
     .attr('orient', 'auto')
     .append('polygon')
     .attr('points', '0 0, 10 3, 0 6')
-    .attr('fill', '#999')
+    .attr('fill', '#aaa')
 
   const g = svg.append('g').attr('class', 'network-graph')
 
@@ -335,27 +335,60 @@ const renderNetwork = (data) => {
         selectedWallet = _wallet_info[0]
       }
 
+      panel_open()
       updateDetailPanel()
     })
 
   nodes.append('circle')
     .attr('r', d => d.radius)
-    .attr('fill', d => d.type === 'address' ? '#2196F3' : (d.txCount > 1 ? '#724e0b' : '#FF9800'))
-    .attr('opacity', 0.8)
+    .attr('fill', d => d.type === 'address' ? '#2196F3' : (d.txCount > 1 ? '#724e0b' : '#dd8800'))
+    .attr('opacity', 0.6)
     .attr('stroke', '#fff')
     .attr('stroke-width', 2)
     .attr('cursor', 'pointer')
 
-  nodes.filter(d => d.type === 'address')
+  // nodes.filter(d => d.type === 'address')
+  //   .append('text')
+  //   .attr("text-anchor", "middle")
+  //   // .attr("font-family", "sans-serif")
+  //   // .attr('dy', '.3em')
+  //   .attr('fill', '#fff')
+  //   // .attr('font-weight', 'bold')
+  //   .attr('pointer-events', 'none')
+  //   .attr('font-size', 10)
+  //   .text(d => (address_wallet_map[d.id] ? address_wallet_map[d.id] + ': ' : '') + d.label.substring(d.label.length - 5, d.label.length))
+
+  nodes.filter(d => d.type === 'address' && !address_wallet_map[d.id])
     .append('text')
     .attr("text-anchor", "middle")
-    // .attr("font-family", "sans-serif")
-    // .attr('dy', '.3em')
     .attr('fill', '#fff')
-    // .attr('font-weight', 'bold')
     .attr('pointer-events', 'none')
     .attr('font-size', 10)
-    .text(d => (address_wallet_map[d.id] ? address_wallet_map[d.id] + ': ' : '') + d.label.substring(d.label.length - 5, d.label.length))
+    .text(d => '...' + d.label.substring(d.label.length - 5, d.label.length))
+
+  nodes.filter(d => d.type === 'address' && address_wallet_map[d.id])
+    .append('g')
+    .each(function(d) {
+      const g = d3.select(this)
+      const addr1 = address_wallet_map[d.id] + ': '
+      const addr2 = '...' + d.label.substring(d.label.length - 5, d.label.length)
+
+      g.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('y', -5)
+        .attr('font-size', '12px')
+        .attr('fill', '#fff')
+        .attr('font-weight', 'bold')
+        .text(addr1)
+
+      g.append('text')
+        .attr('text-anchor', 'middle')
+        .attr('y', 12)
+        .attr('font-size', '12px')
+        .attr('fill', '#fff')
+        .attr('font-weight', 'bold')
+        .text(addr2)
+    })
 
   // nodes.filter(d => d.type === 'address')
   //     .append("text")
@@ -605,11 +638,17 @@ async function limitConcurrency1(dataArr, taskFactory, limit) {
   return Promise.all(results);
 }
 
-const wallet_url = 'http://127.0.0.1:7700'
+const wallet_url = process.env.API_URL1.replace(/\/+$/, '')
 
+let last_req_wallet_info_ts = 0
 function getwalletinfo() {
   const _url = `${wallet_url}/api/wallet/infoes`;
-
+  // let curr_req_wallet_info_ts = Math.floor(Date.now() / 1000)
+  let curr_req_wallet_info_ts = Date.now()
+  if (curr_req_wallet_info_ts - last_req_wallet_info_ts < 500) {
+    return Promise.resolve();
+  }
+  last_req_wallet_info_ts = curr_req_wallet_info_ts;
   return fetch(_url)
     .then(response => {
       // 1. 检查响应状态码
@@ -651,6 +690,9 @@ window.testSend = (wallet_name) => {
     }).then(data => {
       // console.log(' ******** testsend data => ', data)
       trick_wallet();
+      setTimeout(() => {
+        trick_wallet();
+      }, 3000)
       return data;
     }).catch(error => {
       isTesting = false;
@@ -674,6 +716,9 @@ window.testMine = (wallet_name) =>  {
     }).then(data => {
       // console.log(' ******** testmine data => ', data)
       trick_wallet();
+      setTimeout(() => {
+        trick_wallet();
+      }, 3000)
       return data;
     }).catch(error => {
       isTesting = false;
@@ -757,6 +802,25 @@ function checkAddress(addrId) {
   // });
 }
 
+function get_addresses() {
+  const _url = `${wallet_url}/api/wallet/addresses`;
+
+  return fetch(_url)
+    .then(response => {
+      if (!response.ok) {
+        throw new Error(`HTTP 错误! 状态码: ${response.status} for /api/wallet/addresses`);
+      }
+      return response.json();
+    })
+    .then(data => {
+      return data; 
+    })
+    .catch(error => {
+      console.error(`[FAIL]  请求 /api/wallet/addresses 失败:`, error.message);
+      return Promise.reject(new Error(`请求失败: /api/wallet/addresses - ${error.message}`));
+    });
+}
+
 const CONCURRENCY_LIMIT = 40; // 最大并发请求数
 
 function isEmptyUsingForIn(obj) {
@@ -789,6 +853,9 @@ const playSoundEffect = (type) => {
 
 const trick_wallet = () => {
   getwalletinfo().then(infoes => {
+    if (!infoes) {
+      return
+    }
     if (wallet_info.length > 0) {
       let type = 0
       for (const [index, element] of wallet_info.entries()) {
@@ -836,6 +903,11 @@ const trick_wallet = () => {
 }
 
 let isPanelOpen = true;
+const panel_open = () => {
+  isPanelOpen = true;
+  const panel_header = document.querySelector('.panel-header')
+  panel_header.innerHTML = '面板-点击折叠';
+}
 
 const optPanel = () => {
   isPanelOpen = !isPanelOpen;
@@ -844,42 +916,56 @@ const optPanel = () => {
   updateDetailPanel();
 }
 
-export const regtestNet = ({ data, t, ...S }) => {
+let last_regtest_ts = 0
+export const regtestNet = ({ netdata, t, ...S }) => {
   trick_wallet();
   // Ensure client-side render runs even when Snabbdom's oncreate doesn't fire
-  if (data && process.browser) {
+  // let curr_regtest_ts = Math.floor(Date.now() / 1000)
+  let curr_regtest_ts = Date.now()
+  let flag = false
+  if (!rerender_ntwork && netdata && curr_regtest_ts - last_regtest_ts > 500) {
+    last_regtest_ts = curr_regtest_ts
+    flag = true
+  } 
+  if (flag && netdata && process.browser) {
     setTimeout(() => {
-      try { console.debug('regtestnet: scheduled client render, hasData=', !!data) } catch (e) {}
+      try { console.debug('regtestnet: scheduled client render, hasData=', !!netdata) } catch (e) {}
       if (!isEmptyUsingForIn(address_wallet_map)) {
         if (!rerender_ntwork) {
-          rerender_ntwork = true;
-          renderNetwork(data)
+          // rerender_ntwork = true;
+          renderNetwork(netdata)
         }
       }
 
       if (!address_wallet_processed && isEmptyUsingForIn(address_wallet_map)) {
         address_wallet_processed = true
-        limitConcurrency(
-          data['addresses'], 
-          (addr) => checkAddress(addr.id), // 任务工厂：传入地址对象，返回请求 Promise
-          CONCURRENCY_LIMIT
-        )
-        .then(allResults => {
-          // console.log("\n✅ 所有请求（包括成功和失败的）已完成。");
-          // // allResults 包含了所有请求的结果，你可以检查哪些成功哪些失败
-          // console.log("所有结果:", allResults);
-          allResults.forEach(_item => {
-            address_wallet_map[_item.address] = _item.walletname
+        // limitConcurrency(
+        //   netdata['addresses'], 
+        //   (addr) => checkAddress(addr.id), // 任务工厂：传入地址对象，返回请求 Promise
+        //   CONCURRENCY_LIMIT
+        // )
+        // .then(allResults => {
+        //   // console.log("\n✅ 所有请求（包括成功和失败的）已完成。");
+        //   // // allResults 包含了所有请求的结果，你可以检查哪些成功哪些失败
+        //   // console.log("所有结果:", allResults);
+        //   allResults.forEach(_item => {
+        //     address_wallet_map[_item.address] = _item.walletname
+        //   })
+        //   renderNetwork(netdata)
+        // })
+        // .catch(finalError => {
+        //   // 如果你在 limitConcurrency 内部选择不捕获错误，而是在 taskFactory 中抛出错误，
+        //   // 那么 Promise.all 会立即拒绝，并在这里捕获
+        //   console.error("❌ 任务执行过程中发生未捕获的严重错误:", finalError);
+        // });
+        get_addresses().then(results => {
+          results.forEach(_item => {
+            address_wallet_map[_item.address] = _item.name
           })
-          renderNetwork(data)
+          renderNetwork(netdata)
         })
-        .catch(finalError => {
-          // 如果你在 limitConcurrency 内部选择不捕获错误，而是在 taskFactory 中抛出错误，
-          // 那么 Promise.all 会立即拒绝，并在这里捕获
-          console.error("❌ 任务执行过程中发生未捕获的严重错误:", finalError);
-        });
       } else {
-        data['addresses'].forEach(addr => {
+        netdata['addresses'].forEach(addr => {
           if (!address_wallet_map[addr.id]) {
             pending_address_wallet.push(addr)
           }
@@ -896,7 +982,7 @@ export const regtestNet = ({ data, t, ...S }) => {
             allResults.forEach(_item => {
               address_wallet_map[_item.address] = _item.walletname
             })
-            renderNetwork(data)
+            renderNetwork(netdata)
             pending_address_processing = false
             pending_address_wallet = []
           })

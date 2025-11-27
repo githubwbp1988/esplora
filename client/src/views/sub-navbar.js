@@ -16,11 +16,16 @@ function handleLinkClick(e) {
 
 setTimeout(() => {
   const linkElement = document.getElementById('regtest-net-link'); 
+  const linkElement1 = document.getElementById('regtest-net-link1'); 
   const linkElement2 = document.getElementById('blocks-link'); 
   
   if (linkElement) {
       linkElement.removeEventListener('click', handleLinkClick); 
       linkElement.addEventListener('click', handleLinkClick);
+  }
+  if (linkElement1) {
+      linkElement1.removeEventListener('click', handleLinkClick); 
+      linkElement1.addEventListener('click', handleLinkClick);
   }
   if (linkElement2) {
       linkElement2.removeEventListener('click', handleLinkClick); 
@@ -29,10 +34,11 @@ setTimeout(() => {
 }, 800);
 
 export default ( t, isTouch, activeTab) => {
-  return <div className={"sub-navbar" + (activeTab && activeTab === 'regtestNet' ? 'no-bottom-padding' : '')}>
+  return <div className={"sub-navbar" + (activeTab && (activeTab === 'regtestNet' || activeTab == 'regtestNetLog') ? 'no-bottom-padding' : '')}>
     <div className="container sub-nav-container">
       <div className="sub-nav font-h5">
-        <a href="regtestnet" id="regtest-net-link" class={{ active: activeTab == 'regtestNet' }}>Transactions Net</a>
+        <a href="regtestnet" id="regtest-net-link" class={{ active: activeTab == 'regtestNet' }}>Trans Net</a>
+        <a href="regtestnetlog" id="regtest-net-link1" class={{ active: activeTab == 'regtestNetLog' }}>Block Chain</a>
         <a href="." id="dashboard-link" class={{ active: activeTab == 'dashBoard' }}>Dashboard</a>
         <a href="blocks/recent" id="blocks-link" class={{ active: activeTab == 'recentBlocks' }}>Blocks</a>
         <a href="tx/recent" id="tx-link" class={{ active: activeTab == 'recentTxs' }}>Transactions</a>

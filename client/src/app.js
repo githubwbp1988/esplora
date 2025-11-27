@@ -30,10 +30,15 @@ if (process.browser) {
   require('bootstrap/js/dist/collapse')
 }
 
+const apiBase1 = process.env.API_URL1.replace(/\/+$/, '')
+const apiBase1_path_list = [
+  '/api/logic/blockchain'
+] 
+const isApiBase1 = (path) => apiBase1_path_list.includes(path)
 const apiBase = (process.env.API_URL || '/api').replace(/\/+$/, '')
-    , setBase = ({ path, ...r }) => ({ ...r, url: path.includes('://') || path.startsWith('./') ? path : apiBase + path })
+    , setBase = ({ path, ...r }) => ({ ...r, url: path.includes('://') || path.startsWith('./') ? path : (isApiBase1(path) ? apiBase1 : apiBase) + path })
 
-const reservedPaths = [ 'mempool', 'assets', 'search', 'regtestnet' ]
+const reservedPaths = [ 'mempool', 'assets', 'search', 'regtestnet', 'regtestnetlog' ]
 
 // Make driver source observables rxjs5-compatible via rxjs-compat
 setAdapt(stream => O.from(stream))
@@ -60,6 +65,7 @@ export default function main({ DOM, HTTP, route, storage, scanner: scan$, search
   , goTx$     = route('/tx/:txid').map(loc => loc.params.txid).filter(isHash256)
   , goPush$   = route('/tx/push')
   , goRegtest$ = route('/regtestnet')
+  , goRegtestLog$ = route('/regtestnetlog')
   , goRecent$ = route('/tx/recent')
   , goScan$   = route('/scan-qr').mapTo(true)
   , goMempool$= route('/mempool')
@@ -201,7 +207,8 @@ export default function main({ DOM, HTTP, route, storage, scanner: scan$, search
   , mempoolRecent$ = reply('recent')
 
   // network/tx flow data for the regtestnet view
-  , net$ = reply('net').startWith(null)
+  , netdata$ = reply('net').startWith(null)
+  , netlogdata$ = reply('netlog').startWith(null)
 
   // dashboard
   , dashboardState$ = O.combineLatest(blocks$, mempoolRecent$, (blks, txs) => 
@@ -250,6 +257,7 @@ export default function main({ DOM, HTTP, route, storage, scanner: scan$, search
                   , goAPILanding$.mapTo('apiLanding')
                   , goBlocks$.mapTo('recentBlocks')
                   , goRegtest$.mapTo('regtestNet')
+                  , goRegtestLog$.mapTo('regtestNetLog')
                   , goRecent$.mapTo('recentTxs')
                   , block$.filter(notNully).mapTo('block')
                   , tx$.filter(notNully).mapTo('tx')
@@ -281,7 +289,7 @@ export default function main({ DOM, HTTP, route, storage, scanner: scan$, search
                      , goBlocks$, blocks$, nextBlocks$, prevBlocks$, dashboardState$
                      , goBlock$, block$, blockStatus$, blockTxs$, nextBlockTxs$, prevBlockTxs$, openBlock$
                      , mempool$, mempoolRecent$, feeEst$
-                     , data: net$
+                     , netdata$, netlogdata$
                      , tx$, txAnalysis$, openTx$
                      , goAddr$, addr$, addrTxs$, addrQR$
                      , assetMap$, assetList$, goAssetList$, goAsset$, asset$, assetTxs$, unblinded$
@@ -357,8 +365,9 @@ export default function main({ DOM, HTTP, route, storage, scanner: scan$, search
 
     
     , goRegtest$.mapTo(         { category: 'net',     method: 'GET', path: '/tx_flow' })
-    , tickWhileViewing(20000, 'regtestNet', view$)
+    , tickWhileViewing(360000, 'regtestNet', view$)
        .mapTo(                 { category: 'net',     method: 'GET', path: '/tx_flow', bg: true })
+    , goRegtestLog$.mapTo(         { category: 'netlog',     method: 'GET', path: '/api/logic/blockchain' })
     // fetch recent mempool txs when opening the recent txs page
     , goRecent$.mapTo(          { category: 'recent',     method: 'GET', path: '/mempool/recent' })
     // ... and every 5 seconds while it remains open
