@@ -1009,7 +1009,7 @@ export const regtestNet = ({ netdata, t, ...S }) => {
         }
       }
 
-    }, 0)
+    }, 100)
 
     setTimeout(() => {
       rerender_ntwork = false
