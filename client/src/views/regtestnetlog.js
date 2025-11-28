@@ -381,7 +381,7 @@ const renderNetworkLog = (data) => {
       .attr('y', -10)
       .attr("fill", "#fff")
       .attr("font-size", 12)
-      .text(d => d.name);
+      .text(d => `💰${d.name}`);
   nodes_g.filter(d => d.type === 'wallet')
       .append("text")
       .attr("text-anchor", "middle")
@@ -419,7 +419,7 @@ const renderNetworkLog = (data) => {
       .attr('y', -10)
       .attr("fill", "#fff")
       .attr("font-size", 10)
-      .text('mine');
+      .text('mine🔨');
 
   nodes_g.filter(d => d.type === 'mine')
       .append("text")
