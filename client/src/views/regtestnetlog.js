@@ -670,15 +670,17 @@ export const regtestNetLog = ({ netlogdata, t, ...S }) => {
     rerender_logntwork = false
   }
   if (netlogdata && process.browser) {
-    try { console.debug('regtestnet: scheduled client render, hasData=', !!netlogdata) } catch (e) {}
-    if (!rerender_logntwork) {
-      rerender_logntwork = true;
-      renderNetworkLog(netlogdata)
-    }
+    setTimeout(() => {
+      try { console.debug('regtestnet: scheduled client render, hasData=', !!netlogdata) } catch (e) {}
+      if (!rerender_logntwork) {
+        rerender_logntwork = true;
+        renderNetworkLog(netlogdata)
+      }
+    }, 100)
+    setTimeout(() => {
+      rerender_logntwork = false
+    }, 360 * 1000)
   }
-  setTimeout(() => {
-    rerender_logntwork = false
-  }, 360 * 1000)
   return homeLayout(
     <div className="address-network-container" style={{ position: 'relative' }}>
       {/* <div className="panel-header" onclick={optPanel} style={{ boxSizing: 'border-box', position: 'absolute', top: 0, left: '14px', height: '40px', fontSize: '20px', color: '#fff', width: '300px', textAlign: 'center', background: '#00000080' }}>{isPanelOpen ? '面板-点击折叠' : '面板-点击打开'}</div>
