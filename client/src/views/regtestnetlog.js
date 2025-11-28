@@ -671,7 +671,6 @@ export const regtestNetLog = ({ netlogdata, t, ...S }) => {
   }
   if (netlogdata && process.browser) {
     try { console.debug('regtestnet: scheduled client render, hasData=', !!netlogdata) } catch (e) {}
-    renderNetworkLog(netlogdata)
     if (!rerender_logntwork) {
       rerender_logntwork = true;
       renderNetworkLog(netlogdata)
