@@ -305,7 +305,7 @@ const renderNetworkLog = (data) => {
     .attr('font-size', '13px')
     .attr('font-weight', 'bold')
     .attr('fill', '#00ffff')
-    .text(d => `Block: ${d.height}`)
+    .text(d => `Block: ${d.height}🔐`)
   // // 区块 index
   // blockNodeGroups.append('text')
   //   .attr('text-anchor', 'middle')
@@ -347,7 +347,7 @@ const renderNetworkLog = (data) => {
     .attr('font-size', '10px')
     .attr('fill', '#fff')
     .attr('font-weight', 'bold')
-    .text(d => `award: ${d.bonus} BTC`)
+    .text(d => `🔨${d.bonus} BTC`)
 
   // // 区块fee
   // blockNodeGroups.append('text')
