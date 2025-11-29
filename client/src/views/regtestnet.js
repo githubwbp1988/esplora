@@ -514,6 +514,7 @@ const updateDetailPanel = () => {
         <div class="tx-item-id">${tx.id}</div>
         <div class="tx-item-amount">💰 ${formatSat(tx.amount * 100000000)}</div>
         <div class="tx-item-time">${new Date(tx.time * 1000).toLocaleString()}</div>
+        <a href="tx/${tx.id}" class="btn-view">查看交易详情</a>
       </div>
     `).join('')
 
@@ -522,7 +523,15 @@ const updateDetailPanel = () => {
         <h3>💸 转账详情</h3>
         <div class="detail-item">
           <span class="label">转账方向</span>
-          <span class="value">${selectedNode.sourceLabel == 'coinbase' ? '挖矿(打包区块)所得' : selectedNode.sourceLabel} → ${selectedNode.targetLabel}</span>
+          <span class="value">${selectedNode.sourceLabel == 'coinbase' ? '挖矿(打包区块)所得' : selectedNode.sourceLabel}</span>
+          <br/>
+          <a href="address/${selectedNode.sourceLabel}" class="btn-view">查看发送地址详情</a>
+          <br/>
+          <span class="value"> → </span>
+          <br/>
+          <span class="value">${selectedNode.targetLabel}</span>
+          <br/>
+          <a href="address/${selectedNode.targetLabel}" class="btn-view">查看接收地址详情</a>
         </div>
         <div class="detail-item">
           <span class="label">交易数</span>
